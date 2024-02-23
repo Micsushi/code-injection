@@ -1,0 +1,156 @@
+CORRECT OUTPUTS FOR THE TESTS IN THE TEST FOLDER. 
+Test: factorial.s
+
+---------------------------------------------------------------------------
+Running factorial.binary without saving any registers 0x0000 0000. Correct Output:
+0x00100433
+0x00900513
+0x00100493
+0x029504b3
+0xfff50513
+0x00050463
+0xff5ff06f
+0x00900533
+0x020000ef
+0x028000ef
+0x00900533
+0x030000ef
+0x008000b3
+0x0040006f
+0x00008067
+0xffffffff
+
+Translated Correct Output from factorial.binary without saving any registers 0x0000 0000:
+0000000000010000:  00100433          add           s0,zero,ra
+0000000000010004:  00900513          addi          a0,zero,9
+0000000000010008:  00100493          addi          s1,zero,1
+000000000001000c:  029504b3          mul           s1,a0,s1
+0000000000010010:  fff50513          addi          a0,a0,-1
+0000000000010014:  00050463          beqz          a0,8                            # 0x1001c
+0000000000010018:  ff5ff06f          j             -12                             # 0x1000c         
+000000000001001c:  00900533          add           a0,zero,s1
+0000000000010020:  020000ef          jal           ra,32                           # 0x10040         (originally jal ra, 28 but since we added the return statement at the end)
+0000000000010024:  028000ef          jal           ra,40                           # 0x1004c         (originally jal ra, 36 but since we added the return statement at the end)
+0000000000010028:  00900533          add           a0,zero,s1           
+000000000001002c:  030000ef          jal           ra,48                           # 0x1005c         (originally jal ra, 44 but since we added the return statement at the end)
+0000000000010030:  008000b3          add           ra,zero,s0
+0000000000010034:  0040006f          j             4                               # 0x10038         (this is the original return statement in the input)
+0000000000010038:  00008067          ret
+000000000001003c:  00000000ffffffff  illegal    (sentinel value)
+
+
+Note: anything in brackets ( ) is a comment and is not part of the output.
+
+---------------------------------------------------------------------------
+Running factorial.binary with default RISC-V register conventions 0x0FFC 0304. Correct Output:
+0xff810113
+0x00812023
+0x00912223
+0x00100433
+0x00900513
+0x00100493
+0x029504b3
+0xfff50513
+0x00050463
+0xff5ff06f
+0x00900533
+0x02c000ef
+0x034000ef
+0x00900533
+0x03c000ef
+0x008000b3
+0x0040006f
+0x00012403
+0x00412483
+0x00810113
+0x00008067
+0xffffffff
+
+Translated Correct Output from factorial.binary with default RISC-V register conventions 0x0FFC 0304:
+0000000000010000:  ff810113          addi          sp,sp,-8
+0000000000010004:  00812023          sw            s0,0(sp)
+0000000000010008:  00912223          sw            s1,4(sp)
+000000000001000c:  00100433          add           s0,zero,ra
+0000000000010010:  00900513          addi          a0,zero,9
+0000000000010014:  00100493          addi          s1,zero,1
+0000000000010018:  029504b3          mul           s1,a0,s1
+000000000001001c:  fff50513          addi          a0,a0,-1
+0000000000010020:  00050463          beqz          a0,8                            # 0x10028
+0000000000010024:  ff5ff06f          j             -12                             # 0x10018
+0000000000010028:  00900533          add           a0,zero,s1
+000000000001002c:  02c000ef          jal           ra,44                           # 0x10058      (originally jal ra, 28 but we added 16 bytes at the end)
+0000000000010030:  034000ef          jal           ra,52                           # 0x10064      (originally jal ra, 36 but we added 16 bytes at the end)
+0000000000010034:  00900533          add           a0,zero,s1
+0000000000010038:  03c000ef          jal           ra,60                           # 0x10074      (originally jal ra, 44 but we added 16 bytes at the end)
+000000000001003c:  008000b3          add           ra,zero,s0
+0000000000010040:  0040006f          j             4                               # 0x10044      (this is the original return statement in the input)
+0000000000010044:  00012403          lw            s0,0(sp)   (start of the exit node)
+0000000000010048:  00412483          lw            s1,4(sp)
+000000000001004c:  00810113          addi          sp,sp,8
+0000000000010050:  00008067          ret
+0000000000010054:  00000000ffffffff  illegal    (sentinel value)
+
+Note: anything in brackets ( ) is a comment and is not part of the output.
+
+---------------------------------------------------------------------------
+Running factorial.binary saving all registers 0xFFFF FFFF. Correct Output:
+0xfec10113
+0x00012023
+0x00112223
+0x00812423
+0x00912623
+0x00a12823
+0x00100433
+0x00900513
+0x00100493
+0x029504b3
+0xfff50513
+0x00050463
+0xff5ff06f
+0x00900533
+0x038000ef
+0x040000ef
+0x00900533
+0x048000ef
+0x008000b3
+0x0040006f
+0x00012003
+0x00412083
+0x00812403
+0x00c12483
+0x01012503
+0x01410113
+0x00008067
+0xffffffff
+
+Translated Correct Output from factorial.binary saving all registers 0xFFFF FFFF:
+0000000000010000:  fec10113          addi          sp,sp,-20
+0000000000010004:  00012023          sw            zero,0(sp)
+0000000000010008:  00112223          sw            ra,4(sp)
+000000000001000c:  00812423          sw            s0,8(sp)
+0000000000010010:  00912623          sw            s1,12(sp)
+0000000000010014:  00a12823          sw            a0,16(sp)
+0000000000010018:  00100433          add           s0,zero,ra
+000000000001001c:  00900513          addi          a0,zero,9
+0000000000010020:  00100493          addi          s1,zero,1
+0000000000010024:  029504b3          mul           s1,a0,s1
+0000000000010028:  fff50513          addi          a0,a0,-1
+000000000001002c:  00050463          beqz          a0,8                            # 0x10034
+0000000000010030:  ff5ff06f          j             -12                             # 0x10024
+0000000000010034:  00900533          add           a0,zero,s1
+0000000000010038:  038000ef          jal           ra,56                           # 0x10070       (originally jal ra, 28 but since we added 28 bytes at the end)
+000000000001003c:  040000ef          jal           ra,64                           # 0x1007c       (originally jal ra, 36 but since we added 28 bytes at the end)
+0000000000010040:  00900533          add           a0,zero,s1
+0000000000010044:  048000ef          jal           ra,72                           # 0x1008c       (originally jal ra, 44 but since we added 28 bytes at the end)
+0000000000010048:  008000b3          add           ra,zero,s0
+000000000001004c:  0040006f          j             4                               # 0x10050       (this is the original return statement in the input)
+0000000000010050:  00012003          lw            zero,0(sp)                   (start of the exit node)
+0000000000010054:  00412083          lw            ra,4(sp)
+0000000000010058:  00812403          lw            s0,8(sp)
+000000000001005c:  00c12483          lw            s1,12(sp)
+0000000000010060:  01012503          lw            a0,16(sp)
+0000000000010064:  01410113          addi          sp,sp,20
+0000000000010068:  00008067          ret
+000000000001006c:  00000000ffffffff  illegal       (sentinel value)
+
+Note: anything in brackets ( ) is a comment and is not part of the output.
